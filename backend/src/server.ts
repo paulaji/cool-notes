@@ -1,15 +1,8 @@
-import "dotenv/config";
+import app from "./app";
 import env from "./util/validateEnv";
 import mongoose from "mongoose";
-import express from "express";
-const app = express();
-const port = env.PORT;
 
-app.get("/", (req, res) => {
-  res.send(
-    "This is a/the looooong message intended to be sent in the root of the server!"
-  );
-});
+const port = env.PORT;
 
 mongoose
   .connect(env.MONGO_CONNECTION_STRING)
