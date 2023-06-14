@@ -24,7 +24,7 @@ export const getNote: RequestHandler = async (req, res, next) => {
     const note = await NoteModel.findById(noteId).exec();
 
     if (!note) {
-      throw createHttpError(404, "Note not found");
+      throw createHttpError(404, "Note not found!");
     }
 
     res.status(200).json(note);
@@ -81,13 +81,13 @@ export const updateNote: RequestHandler<
 
   try {
     if (!mongoose.isValidObjectId(noteId)) {
-      throw createHttpError(400, "Invalid note id");
+      throw createHttpError(400, "Invalid note id!");
     }
 
     const note = await NoteModel.findById(noteId).exec();
 
     if (!note) {
-      throw createHttpError(404, "Note not found");
+      throw createHttpError(404, "Note not found!");
     }
 
     if (!newTitle) {
@@ -100,6 +100,28 @@ export const updateNote: RequestHandler<
     const updatedNote = await note.save();
 
     res.status(200).json(updatedNote);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteNote: RequestHandler = async (req, res, next) => {
+  const noteId = req.params.noteId;
+
+  try {
+    if (!mongoose.isValidObjectId(noteId)) {
+      throw createHttpError(400, "Invalid note id!");
+    }
+
+    const note = await NoteModel.findById(noteId).exec();
+
+    if (!note) {
+      throw createHttpError(404, "Note not found!");
+    }
+
+    await note.deleteOne();
+
+    res.sendStatus(204);
   } catch (error) {
     next(error);
   }
