@@ -1,22 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import { Button } from "react-bootstrap";
+import { Note as NoteModel } from "./models/note";
+import Note from "./components/Note";
 
 function App() {
-  const [buttonClickCount, setButtonClickCount] = useState(0);
+  const [notes, setNotes] = useState<NoteModel[]>([]);
+
+  useEffect(() => {
+    async function loadNotes() {
+      try {
+        const response = await fetch("/api/notes", {
+          method: "GET",
+        });
+        const notes = await response.json();
+        setNotes(notes);
+      } catch (error) {
+        console.error(error);
+        alert(error);
+      }
+    }
+    loadNotes();
+  }, []);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Namaskaaram kootukaare!</p>
-        <Button onClick={() => setButtonClickCount(buttonClickCount + 1)}>
-          Jagathy ittu {buttonClickCount} Bomb!
-        </Button>
-        <Button onClick={() => setButtonClickCount(buttonClickCount - 1)}>
-          Ittilla
-        </Button>
-      </header>
+      {notes.map((note) => (
+        <Note note={note} key={note._id} />
+      ))}
     </div>
   );
 }
